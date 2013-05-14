@@ -1,6 +1,6 @@
 package fr.inria.diversify;
 
-import fr.diversify.bipartiteGraph.BipartiteGraph;
+import fr.inria.diversify.bipartiteGraph.BipartiteGraph;
 import org.uncommons.maths.random.PoissonGenerator;
 
 import java.io.BufferedWriter;
@@ -18,10 +18,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         Main main = new Main();
 
-
-        main.printExtinctionSequence("test.csv",100);
-        main.printExtinctionSequence("test.csv",100);
-        main.printExtinctionSequence("test.csv",100);
+        main.graph().displayGraph();
         main.printExtinctionSequence("test.csv",100);
     }
 
@@ -46,25 +43,6 @@ public class Main {
             out.write(es.get("maxService")[i]+";");
             out.write(es.get("minService")[i]+"\n");
         }
-//        out.write("nbPlatform");
-//        for(int i = 0; i < nbPlatform; i++)
-//            out.write(";"+(nbPlatform - i));
-//
-//        out.write("\nrandom");
-//        for(double d: extinctionSequence(n, "random"))
-//            out.write(";"+d);
-//        out.write("\nmaxApp");
-//        for(double d: extinctionSequence(n, ""))
-//            out.write(";"+d);
-//        out.write("\nminApp");
-//        for(double d: extinctionSequence(n, "minApp"))
-//            out.write(";"+d);
-//        out.write("\nmaxService");
-//        for(double d: extinctionSequence(n, "maxService"))
-//            out.write(";"+d);
-//        out.write("\nminService");
-//        for(double d: extinctionSequence(n, "minService"))
-//            out.write(";"+d);
         out.close();
     }
 
@@ -73,6 +51,7 @@ public class Main {
 
         int j = 0;
         for(int i = 0; i < n; i++) {
+            System.out.println(i+"  "+strategy);
             try {
                 m[j] = graph().extinctionSequence(strategy);
                 j++;
@@ -87,7 +66,7 @@ public class Main {
             for(int k = 0; k < j; k++) {
                 tmp = m[k][i] + tmp;
             }
-            if(i < nbPlatform )
+            if(i < nbPlatform*2 )
                 ret[i] = tmp/(m[0].length*j);
         }
         return ret;
@@ -95,13 +74,15 @@ public class Main {
 
 
     protected BipartiteGraph graph() throws Exception {
-        nbPlatform = 25;
+        nbPlatform = 200;
         BipartiteGraph graph = new BipartiteGraph();
-        graph.initService(50,new PoissonGenerator(40, new Random()));
+        graph.initService(15,new PoissonGenerator(6, new Random()));
 
-        graph.initApplication(200, false, 1, new PoissonGenerator(15, new Random()));
-        graph.initPlatform(nbPlatform,10);
-        graph.initDependencies();
+        graph.initApplication(200, false, 1, new PoissonGenerator(5, new Random()));
+//        graph.initPlatform(nbPlatform,10);
+//       graph.initRandomPlatform(40,10, new PoissonGenerator(4, new Random()));
+        graph.initPlatformAndDependencies(10, new PoissonGenerator(4, new Random()));
+//        graph.initDependencies();
         return  graph;
     }
 
