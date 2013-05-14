@@ -14,7 +14,7 @@ import java.util.*;
  * Time: 1:24 PM
  */
 public class Main {
-    int nbApp;
+    int nbPlatform;
     public static void main(String[] args) throws Exception {
         Main main = new Main();
 
@@ -27,29 +27,44 @@ public class Main {
 
 
     public void printExtinctionSequence(String fileName, int n) throws IOException {
-
+        Map<String, Double[]> es = new HashMap<String, Double[]>();
         FileWriter fstream = new FileWriter(fileName);
         BufferedWriter out = new BufferedWriter(fstream);
 
-        out.write("nbPlatform");
-        for(int i = 0; i < nbApp; i++)
-            out.write(";"+i);
+        es.put("random", extinctionSequence(n, "random"));
+        es.put("maxApp", extinctionSequence(n, "maxApp"));
+        es.put("minApp", extinctionSequence(n, "minApp"));
+        es.put("maxService", extinctionSequence(n, "maxService"));
+        es.put("minService", extinctionSequence(n, "minService"));
 
-        out.write("\nrandom");
-        for(double d: extinctionSequence(n, "random"))
-            out.write(";"+d);
-        out.write("\nmaxApp");
-        for(double d: extinctionSequence(n, "maxApp"))
-            out.write(";"+d);
-        out.write("\nminApp");
-        for(double d: extinctionSequence(n, "minApp"))
-            out.write(";"+d);
-        out.write("\nmaxService");
-        for(double d: extinctionSequence(n, "maxService"))
-            out.write(";"+d);
-        out.write("\nminService");
-        for(double d: extinctionSequence(n, "minService"))
-            out.write(";"+d);
+
+        out.write("random;maxApp;minApp;maxService;minService\n");
+        for(int i = 0; i < nbPlatform; i++) {
+            out.write(es.get("random")[i]+";");
+            out.write(es.get("maxApp")[i]+";");
+            out.write(es.get("minApp")[i]+";");
+            out.write(es.get("maxService")[i]+";");
+            out.write(es.get("minService")[i]+"\n");
+        }
+//        out.write("nbPlatform");
+//        for(int i = 0; i < nbPlatform; i++)
+//            out.write(";"+(nbPlatform - i));
+//
+//        out.write("\nrandom");
+//        for(double d: extinctionSequence(n, "random"))
+//            out.write(";"+d);
+//        out.write("\nmaxApp");
+//        for(double d: extinctionSequence(n, ""))
+//            out.write(";"+d);
+//        out.write("\nminApp");
+//        for(double d: extinctionSequence(n, "minApp"))
+//            out.write(";"+d);
+//        out.write("\nmaxService");
+//        for(double d: extinctionSequence(n, "maxService"))
+//            out.write(";"+d);
+//        out.write("\nminService");
+//        for(double d: extinctionSequence(n, "minService"))
+//            out.write(";"+d);
         out.close();
     }
 
@@ -66,13 +81,13 @@ public class Main {
             }
         }
 
-        Double ret[] = new Double[nbApp];
+        Double ret[] = new Double[nbPlatform];
         for(int i = 0; i < m[0].length; i++) {
             double tmp = 0;
             for(int k = 0; k < j; k++) {
                 tmp = m[k][i] + tmp;
             }
-//            if(tmp != 0)
+            if(i < nbPlatform )
                 ret[i] = tmp/(m[0].length*j);
         }
         return ret;
@@ -80,12 +95,12 @@ public class Main {
 
 
     protected BipartiteGraph graph() throws Exception {
-        nbApp = 200;
+        nbPlatform = 25;
         BipartiteGraph graph = new BipartiteGraph();
         graph.initService(50,new PoissonGenerator(40, new Random()));
 
-        graph.initApplication(nbApp, false, 1, new PoissonGenerator(15, new Random()));
-        graph.initPlatform(25,10);
+        graph.initApplication(200, false, 1, new PoissonGenerator(15, new Random()));
+        graph.initPlatform(nbPlatform,10);
         graph.initDependencies();
         return  graph;
     }
